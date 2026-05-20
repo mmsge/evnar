@@ -1,0 +1,22 @@
+lockfile_version: '1'
+generated_at: '2026-05-20T13:33:06.730888+00:00'
+dependencies: []
+local_deployed_files:
+- .agents/skills/books
+- .agents/skills/doctor-who
+- .agents/skills/mastodon
+- .agents/skills/new-project-scaffold
+- .agents/skills/obsidian-template
+- .agents/skills/session-start-hook
+- .claude/skills/books
+- .claude/skills/doctor-who
+- .claude/skills/mastodon
+- .claude/skills/new-project-scaffold
+- .claude/skills/obsidian-template
+- .claude/skills/session-start-hook
+- .windsurf/skills/books
+- .windsurf/skills/doctor-who
+- .windsurf/skills/mastodon
+- .windsurf/skills/new-project-scaffold
+- .windsurf/skills/obsidian-template
+- .windsurf/skills/session-start-hook
