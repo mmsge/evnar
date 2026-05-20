@@ -143,11 +143,11 @@ We're all done. In your last message to the user, Provide a detailed summary to 
 
 * Summary of the changes made
 * Validation results
-  1. ✅/‼️ Session hook execution (include details if it failed)
-  2. ✅/‼️ linter execution (include details if it failed)
-  3. ✅/‼️ test execution (include details if it failed)
-* Hook execution mode: Syncronous
-  * inform user that hook is running syncronous and the below trade-offs. Let them know that we can change it to async if they prefer faster session startup.
+  1. PASS/FAIL Session hook execution (include details if it failed)
+  2. PASS/FAIL linter execution (include details if it failed)
+  3. PASS/FAIL test execution (include details if it failed)
+* Hook execution mode: Synchronous
+  * inform user that hook is running synchronous and the below trade-offs. Let them know that we can change it to async if they prefer faster session startup.
     * Pros: Guarantees dependencies are installed before your session starts, preventing race conditions where Claude might try to run tests or linters before they're ready
     * Cons: Your remote session will only start once the session start hook is completed
 * inform user that once they merge the session start hook into their repo's default branch, all future sessions will use it.

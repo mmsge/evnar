@@ -1,0 +1,21 @@
+apm_modules/
+build/
+dist/
+tmp/
+
+# APM deployment output. Source files live under .apm/.
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.agents/skills/
+.github/agents/
+.github/hooks/
+.github/instructions/
+.github/prompts/
+.github/copilot-instructions.md
+.claude/
+.cursor/
+.codex/
+.gemini/
+.opencode/
+.windsurf/

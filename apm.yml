@@ -1,0 +1,39 @@
+name: evnar
+version: 0.1.0
+description: Personal APM package for Markus' skills, instructions, prompts, agents, hooks, and MCP server declarations.
+author: Markus
+license: MIT
+type: hybrid
+
+# Keep this repo explicit instead of relying on harness auto-detection.
+# Skills still deploy to .agents/skills/ by default across targets.
+targets:
+  - copilot
+  - claude
+  - cursor
+  - codex
+  - gemini
+  - opencode
+  - windsurf
+  - agent-skills
+
+includes: auto
+
+dependencies:
+  apm: []
+  mcp: []
+
+scripts:
+  targets: apm targets
+  preview: apm install --target all,agent-skills --dry-run
+  install: apm install --target all,agent-skills
+  audit: apm audit
+  pack: apm pack
+
+compilation:
+  target: all
+  strategy: distributed
+  source_attribution: true
+  exclude:
+    - "apm_modules/**"
+    - "tmp/**"

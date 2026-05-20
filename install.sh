@@ -1,38 +1,69 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SKILLS_DIR="$(cd "$(dirname "$0")/skills" && pwd)"
-TARGET_DIR="${HOME}/.claude/skills"
-FORCE=false
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APM_BIN="${APM_BIN:-apm}"
+DEFAULT_TARGETS="${APM_TARGETS:-all,agent-skills}"
 
-for arg in "$@"; do
-  [[ "$arg" == "--force" ]] && FORCE=true
+HAS_TARGET=false
+APM_ARGS=()
+
+usage() {
+  cat <<'USAGE'
+Usage: ./install.sh [options]
+
+Runs:
+  apm install --target all,agent-skills
+
+Options:
+  --target, -t      Pass a custom APM target value.
+  --help            Show this help.
+
+All other options are forwarded to `apm install`.
+USAGE
+}
+
+while [[ $# -gt 0 ]]; do
+  arg="$1"
+  case "$arg" in
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    --target|-t)
+      HAS_TARGET=true
+      APM_ARGS+=("$arg")
+      shift
+      if [[ $# -eq 0 ]]; then
+        echo "error: $arg requires a value" >&2
+        exit 2
+      fi
+      APM_ARGS+=("$1")
+      shift
+      ;;
+    --target=*)
+      HAS_TARGET=true
+      APM_ARGS+=("$arg")
+      shift
+      ;;
+    *)
+      APM_ARGS+=("$arg")
+      shift
+      ;;
+  esac
 done
 
-mkdir -p "$TARGET_DIR"
+if ! command -v "$APM_BIN" >/dev/null 2>&1; then
+  echo "error: apm is required. Install it from https://microsoft.github.io/apm/ and retry." >&2
+  exit 127
+fi
 
-installed=0
-skipped=0
-
-for skill_path in "$SKILLS_DIR"/*/; do
-  skill_name="$(basename "$skill_path")"
-  target="$TARGET_DIR/$skill_name"
-
-  if [[ -e "$target" || -L "$target" ]]; then
-    if $FORCE; then
-      rm -rf "$target"
-    else
-      echo "  skip  $skill_name (already exists — use --force to overwrite)"
-      skipped=$((skipped + 1))
-      continue
-    fi
-  fi
-
-  ln -s "$skill_path" "$target"
-  echo "  ok    $skill_name"
-  installed=$((installed + 1))
-done
+cd "$ROOT_DIR"
+if $HAS_TARGET; then
+  "$APM_BIN" install "${APM_ARGS[@]}"
+else
+  "$APM_BIN" install --target "$DEFAULT_TARGETS" "${APM_ARGS[@]}"
+fi
 
 echo ""
-echo "$installed installed, $skipped skipped."
-echo "Restart Claude Code for changes to take effect."
+echo "APM command complete."
