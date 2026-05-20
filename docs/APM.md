@@ -19,8 +19,7 @@ or use the wrapper:
 ```
 
 The wrapper calls `apm install --target all,agent-skills` when `apm` is on
-`PATH`. If APM is not installed, it falls back to the old Claude-only skill
-symlink install into `~/.claude/skills`.
+`PATH`. If APM is not installed, the wrapper exits with an error.
 
 ## Add local content
 

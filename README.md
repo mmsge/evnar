@@ -24,16 +24,8 @@ Du kan og bruke wrapperen:
 ./install.sh
 ```
 
-Wrapperen brukar APM når `apm` finst på `PATH`. Viss APM ikkje er installert,
-fell ho tilbake til den gamle Claude Code-installasjonen og symlenkar evnene
-til `~/.claude/skills/`.
-
-For berre den gamle Claude Code-flyten:
-
-```bash
-./install.sh --legacy-claude
-./install.sh --legacy-claude --force
-```
+Wrapperen krev APM og køyrer same installasjon med standardmålet
+`all,agent-skills`.
 
 ## Innhald
 
