@@ -1,0 +1,62 @@
+{
+  "project": "Eksempel · open source",
+  "footnote": "personleg notat",
+  "out": "example-karusell.pdf",
+  "slides": [
+    {
+      "kicker": "EI LITA HISTORIE",
+      "title": "Eg lurte\npå noko.",
+      "sub": "Ein observasjon som sette i gang prosjektet.\nKort, personleg, undrande.",
+      "title_size": 124,
+      "visual": {"type": "image", "path": "sample/photo.jpg", "mode": "halfpage", "caption": "Der det starta"}
+    },
+    {
+      "kicker": "KVA EG OPPDAGA",
+      "title": "Det låg\nmeir i data.",
+      "sub": "Lett tilgjengeleg, men vanskeleg å sjå saman.",
+      "title_size": 104,
+      "visual": {"type": "icon", "name": "database", "pos": "right", "size": 340}
+    },
+    {
+      "kicker": "SÅ EG LAGA NOKO",
+      "title": "Tre steg\ntil svar.",
+      "title_size": 108,
+      "visual": {"type": "step_cards", "cards": [
+        {"label": "Steg", "title": "1", "sub": "Identifisere"},
+        {"label": "Steg", "title": "2", "sub": "Hente data"},
+        {"label": "Steg", "title": "3", "sub": "Visualisere"}
+      ]}
+    },
+    {
+      "kicker": "KVA EG FANN",
+      "title": "Tala som\nsette meg\npå sporet.",
+      "title_size": 96,
+      "visual": {"type": "stat_cards", "cards": [
+        {"big": "33 %", "line1": "av tilfella", "line2": "uventa opphav", "color": "lime"},
+        {"big": "20 %", "line1": "av brukarane", "line2": "byter kvar månad", "color": "white"},
+        {"big": "2×", "line1": "auke", "line2": "siste året", "color": "cream"},
+        {"big": "0", "line1": "manuelle", "line2": "steg", "color": "mute"}
+      ]}
+    },
+    {
+      "kicker": "ETTER KVAR ØKT",
+      "title": "Det eg vil\nfølgje opp.",
+      "sub": "Fanga med ein gong, så ingenting forsvinn.",
+      "title_size": 104,
+      "visual": {"type": "checklist", "header": "Oppfølgingar", "sub": "Hak av etter kvart.", "items": [
+        {"text": "Skriv om datakjelda", "done": true},
+        {"text": "Rydd opp i fargane", "done": true},
+        {"text": "Legg til filter på årstal", "done": false},
+        {"text": "Skriv ein kort README", "done": false},
+        {"text": "Del på LinkedIn", "done": false}
+      ]}
+    },
+    {
+      "kicker": "PRØV DEN SJØLV",
+      "title": "Open\nkjelde.",
+      "sub": "Demo i nettlesaren. Inga innlogging.",
+      "title_size": 128,
+      "visual": {"type": "url_cta", "label": "Webapp", "url": "dømekarusell.no", "lines": ["Open kjelde, opne data.", "Kjeldekoden ligg på GitHub."], "cta": "→ Sjå demoen"}
+    }
+  ]
+}
