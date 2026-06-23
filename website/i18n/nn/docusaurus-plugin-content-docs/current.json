@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.docsSidebar.category.Installering": {
+    "message": "Installering",
+    "description": "The label for category 'Installering' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Installering.link.generated-index.title": {
+    "message": "Installering",
+    "description": "The generated-index page title for category 'Installering' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Installering.link.generated-index.description": {
+    "message": "To måtar å få skillane på plass: APM-ruta (installer alt på ein gong) og last-ned-og-last-inn-ruta (ta éin skill manuelt, utan APM).",
+    "description": "The generated-index page description for category 'Installering' in sidebar 'docsSidebar'"
+  },
+  "sidebar.docsSidebar.category.Skills": {
+    "message": "Skills",
+    "description": "The label for category 'Skills' in sidebar 'docsSidebar'"
+  }
+}

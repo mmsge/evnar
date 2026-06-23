@@ -1,0 +1,46 @@
+{
+  "link.title.HANDBOK": {
+    "message": "HANDBOK",
+    "description": "The title of the footer links column with title=HANDBOK in the footer"
+  },
+  "link.title.APM": {
+    "message": "APM",
+    "description": "The title of the footer links column with title=APM in the footer"
+  },
+  "link.title.KJELDE": {
+    "message": "KJELDE",
+    "description": "The title of the footer links column with title=KJELDE in the footer"
+  },
+  "link.item.label.Introduksjon": {
+    "message": "Introduksjon",
+    "description": "The label of footer link with label=Introduksjon linking to /docs/intro"
+  },
+  "link.item.label.Installering — APM": {
+    "message": "Installering — APM",
+    "description": "The label of footer link with label=Installering — APM linking to /docs/installering/apm"
+  },
+  "link.item.label.Last ned og last inn": {
+    "message": "Last ned og last inn",
+    "description": "The label of footer link with label=Last ned og last inn linking to /docs/installering/manuell"
+  },
+  "link.item.label.Alle skills": {
+    "message": "Alle skills",
+    "description": "The label of footer link with label=Alle skills linking to /docs/skills/oversikt"
+  },
+  "link.item.label.APM-kjeldeformatet": {
+    "message": "APM-kjeldeformatet",
+    "description": "The label of footer link with label=APM-kjeldeformatet linking to /docs/apm-format"
+  },
+  "link.item.label.Agent Package Manager ↗": {
+    "message": "Agent Package Manager ↗",
+    "description": "The label of footer link with label=Agent Package Manager ↗ linking to https://microsoft.github.io/apm/"
+  },
+  "link.item.label.mmsge/evnar ↗": {
+    "message": "mmsge/evnar ↗",
+    "description": "The label of footer link with label=mmsge/evnar ↗ linking to https://github.com/mmsge/evnar"
+  },
+  "copyright": {
+    "message": "EVNAR.DOC · © 2026 MARKUS · bygd med APM + Docusaurus · [PgDn] FOR MEIR",
+    "description": "The footer copyright"
+  }
+}
