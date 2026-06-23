@@ -1,0 +1,22 @@
+{
+  "title": {
+    "message": "EVNAR.DOC",
+    "description": "The title in the navbar"
+  },
+  "item.label.[F1] HANDBOK": {
+    "message": "[F1] HANDBOK",
+    "description": "Navbar item with label [F1] HANDBOK"
+  },
+  "item.label.[F2] INSTALLER": {
+    "message": "[F2] INSTALLER",
+    "description": "Navbar item with label [F2] INSTALLER"
+  },
+  "item.label.[F3] SKILLS": {
+    "message": "[F3] SKILLS",
+    "description": "Navbar item with label [F3] SKILLS"
+  },
+  "item.label.GITHUB": {
+    "message": "GITHUB",
+    "description": "Navbar item with label GITHUB"
+  }
+}

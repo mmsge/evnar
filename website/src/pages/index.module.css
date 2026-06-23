@@ -1,0 +1,50 @@
+.boot {
+  min-height: calc(100vh - var(--ifm-navbar-height));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem 4rem;
+}
+
+.screen {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  color: var(--amber-text);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  font-size: clamp(0.68rem, 2.2vw, 1rem);
+  line-height: 1.55;
+  margin: 0 auto;
+  white-space: pre;
+  text-shadow: 0 0 4px rgba(255, 176, 0, 0.4);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.title {
+  color: var(--amber);
+  text-shadow: 0 0 10px rgba(255, 176, 0, 0.6);
+}
+
+.ok {
+  color: var(--amber-bright);
+}
+
+.warn {
+  color: var(--dos-warn);
+  text-shadow: 0 0 6px rgba(255, 123, 0, 0.6);
+}
+
+.depLink {
+  color: var(--amber-bright);
+  text-decoration: underline;
+}
+
+.actions {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
