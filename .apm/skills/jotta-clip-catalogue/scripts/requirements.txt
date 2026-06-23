@@ -1,0 +1,12 @@
+# jotta-clip-catalogue Python deps
+# YOU install these — the skill never installs anything itself.
+# Check first:   python scripts/pipeline.py doctor
+# Then install:  pip install -r requirements.txt --break-system-packages
+# (ffmpeg/ffprobe must also be on PATH: brew install ffmpeg)
+
+faster-whisper>=1.0      # language detection + non-Norwegian ASR
+transformers>=4.40       # NB-Whisper (Norwegian ASR)
+torch>=2.2               # backend for transformers (MPS on Apple Silicon)
+librosa>=0.10            # audio loading for sound-event detection
+panns-inference>=0.1.1   # AudioSet sound-event detection
+numpy>=1.24
