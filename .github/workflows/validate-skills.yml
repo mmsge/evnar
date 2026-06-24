@@ -1,0 +1,35 @@
+name: Validate skills
+
+on:
+  push:
+    branches: [hovud]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  structure:
+    name: Skill structure (APM rules)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: python -m pip install --quiet pyyaml
+      - run: python .github/scripts/validate_skills.py
+
+  audit:
+    name: APM security audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install APM
+        run: |
+          curl -fsSL https://aka.ms/apm-unix | APM_INSTALL_DIR="$HOME/.local/bin" sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - run: apm --version
+      - name: APM audit
+        run: apm audit
