@@ -27,6 +27,40 @@ Du kan og bruke wrapperen:
 Wrapperen krev APM og køyrer same installasjon med standardmålet
 `all,agent-skills`.
 
+## Last ned enkeltevner
+
+Kvar evne blir pakka som eit sjølvstendig arkiv og lagt ut på
+[Releases](https://github.com/mmsge/evnar/releases). Du treng verken APM eller
+klone av repoet for å bruke ei enkelt evne.
+
+```bash
+# alltid ferskaste versjon
+curl -LO https://github.com/mmsge/evnar/releases/download/latest/git.skill
+
+# ein fast versjon
+curl -LO https://github.com/mmsge/evnar/releases/download/v0.1.0/git.skill
+```
+
+Arkivet inneheld mappa til evna, så du pakkar det rett ut der evnene bur:
+
+```bash
+unzip git.skill -d ~/.claude/skills/     # gjev ~/.claude/skills/git/SKILL.md
+```
+
+Kvar evne finst i to utgåver med same innhald: `.skill` og `.zip`. Bruk
+`.zip` når du lastar opp til claude.ai, som berre godtek det filnamnet.
+`evnar-all-skills.zip` inneheld alle evnene, og `skills.json` og `SHA256SUMS`
+ligg ved for skripting og verifisering.
+
+Pakkinga skjer i [`pack-skills.yml`](.github/workflows/pack-skills.yml). Kvar
+push til `hovud` friskar opp `latest`, og ein `vX.Y.Z`-tagg lagar ei permanent
+utgåve. Du kan køyre same bygg lokalt:
+
+```bash
+pip install pyyaml
+python3 .github/scripts/pack_skills.py
+```
+
 ## Innhald
 
 | Type | Plassering |
