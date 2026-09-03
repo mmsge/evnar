@@ -1,0 +1,109 @@
+name: Pack skills
+
+# Packages every skill under .apm/skills/ into a standalone <name>.skill archive
+# and publishes them as release assets:
+#
+#   push to hovud  -> refreshes the rolling "latest" release
+#   push a v* tag  -> cuts a permanent versioned release
+#   pull request   -> builds and validates only, publishes nothing
+#
+# Stable download URL:
+#   https://github.com/mmsge/evnar/releases/download/latest/<name>.skill
+
+on:
+  push:
+    branches: [hovud]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+# Never let two pushes race to update the same rolling release.
+concurrency:
+  group: pack-skills-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build dependencies
+        run: pip install pyyaml
+
+      - name: Resolve release tag
+        id: meta
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            tag="${GITHUB_REF#refs/tags/}"
+            # A versioned release must agree with apm.yml, so the package has
+            # exactly one version number.
+            echo "expect=--expect-version $tag" >> "$GITHUB_OUTPUT"
+          else
+            tag="latest"
+            echo "expect=" >> "$GITHUB_OUTPUT"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Building for tag: $tag"
+
+      - name: Validate and pack skills
+        run: |
+          python3 .github/scripts/pack_skills.py \
+            --repo "${{ github.repository }}" \
+            --tag "${{ steps.meta.outputs.tag }}" \
+            ${{ steps.meta.outputs.expect }}
+
+      - name: Summarise
+        run: |
+          {
+            echo "## Packed skills"
+            echo
+            cat dist/SHA256SUMS | sed 's/^/    /'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: skills
+          path: dist/
+          if-no-files-found: error
+
+      - name: Publish rolling "latest" release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/hovud'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest skills
+          body_path: dist/RELEASE_NOTES.md
+          # Kept as a prerelease so /releases/latest/ still resolves to the
+          # newest semver release, while /releases/download/latest/ stays fresh.
+          prerelease: true
+          make_latest: false
+          files: |
+            dist/*.skill
+            dist/*.zip
+            dist/skills.json
+            dist/SHA256SUMS
+          fail_on_unmatched_files: true
+
+      - name: Publish versioned release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.tag }}
+          body_path: dist/RELEASE_NOTES.md
+          make_latest: true
+          files: |
+            dist/*.skill
+            dist/*.zip
+            dist/skills.json
+            dist/SHA256SUMS
+          fail_on_unmatched_files: true
