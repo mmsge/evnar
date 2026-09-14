@@ -83,6 +83,7 @@ python3 .github/scripts/pack_skills.py
 | [`books`](.apm/skills/books/SKILL.md) | Søk i lesehistorikk frå StoryGraph og Bookwyrm |
 | [`doctor-who`](.apm/skills/doctor-who/SKILL.md) | Slå opp, svar på og diskuter alt om Doctor Who |
 | [`session-start-hook`](.apm/skills/session-start-hook/SKILL.md) | Lag SessionStart-hooks for Claude Code på nettet |
+| [`offshoot`](.apm/skills/offshoot/SKILL.md) | Spinn arbeid ut i ei eiga økt med ein brief som held på rammene |
 
 ## Nyttige kommandoar
 
