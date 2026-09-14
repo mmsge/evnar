@@ -15,22 +15,30 @@ edges finds a helpful workaround.
 Read `references/brief-anatomy.md` before writing the brief. It carries the checklist and
 a worked example; this file is only the workflow.
 
+This skill needs a `spawn_task` tool, which not every client provides. If it is not in
+your toolset, say so rather than reaching for the nearest substitute: a subagent that
+returns into this conversation is a different thing from a session that runs on its own,
+and quietly swapping one for the other is not what was asked for. The brief is still worth
+writing, and it can be handed over by other means.
+
 ## 1. Gather, before asking anything
 
 Spend the tool calls here rather than in questions. Most of what the brief needs is on
 disk or in this conversation already.
 
-- `git rev-parse --show-toplevel`, then read that repo's `CLAUDE.md` in full. Pull out the
-  handful of invariants that bear on **this** task — not all of them. A brief that quotes
-  three relevant rules gets read; one that restates the whole file gets skimmed.
+- `git rev-parse --show-toplevel`, then read that repo's `CLAUDE.md`, `AGENTS.md` or
+  whatever it keeps its house rules in, in full. Pull out the handful of invariants that
+  bear on **this** task — not all of them. A brief that quotes three relevant rules gets
+  read; one that restates the whole file gets skimmed.
 - `git status` and `git log --oneline -5`. Uncommitted work, the current branch and any
   open pull request are things the offshoot must not disturb, and it cannot see them.
 - Scan this conversation for constraints you were given that still apply over there —
   a resource that must be left alone, a rate limit, a permission cache, a mailbox someone
   else is using. These are the most valuable thing you have, because they exist nowhere
   on disk.
-- If the work might need a decision record, read `docs/decision-records/index.md` for the
-  house shape and the current count.
+- If the repo records decisions somewhere — a `docs/decision-records/` tree, ADRs, a
+  design-notes folder — read its index for the house shape and the current count. If it
+  records them nowhere, note that too: it changes where a proposal has to land.
 
 ## 2. Ask only what changes the brief
 
@@ -50,8 +58,9 @@ change a line of the brief are friction.
 Follow `references/brief-anatomy.md`. The short version, in order: hard constraints with
 a reason attached to each; the isolation boundary named as concrete commands, modules and
 hostnames; where credentials live and how to load them without printing them; the specific
-repo rules quoted, plus a pointer to `CLAUDE.md`; the authority rule, if the work touches
-anything consult-level; the local mechanics that bite; and what good looks like at the end.
+repo rules quoted, plus a pointer to the file they came from; a stopping point, if the work
+is really a decision rather than a task; the local mechanics that bite; and what good looks
+like at the end.
 
 ## 4. Emit exactly one spawn_task call
 

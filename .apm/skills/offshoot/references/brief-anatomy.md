@@ -8,9 +8,12 @@ missing that piece did something reasonable and wrong.
 Write the sections in this order. The order is itself load-bearing: constraints read
 before the task are constraints; constraints read after it are footnotes.
 
-The examples use an invented repository — a billing sync in `Acme-Co/invoicer` — purely to
+The examples use an invented repository, a billing sync in `Acme-Co/invoicer`, purely to
 keep them concrete. Substitute the real commands, modules and hostnames of the repo you
-are actually spinning work out of.
+are actually spinning work out of. Sections 5 and 6 go further and assume a particular
+house style: a `CLAUDE.md`, decision records, a `make check`. Those are one shop's
+conventions, not requirements. Where the repo you are in has its own equivalent, use that;
+where it has none, the section says what to do instead.
 
 ---
 
@@ -40,9 +43,14 @@ the accounts. Four concrete lines beat one careful sentence.
 > no `make sync-once`, no requests to `api.billing.example.com`, and nothing involving the
 > live or sandbox account ids.
 
+The branch you are on belongs in this list. The offshoot gets its own worktree, so it will
+not collide with your uncommitted work by accident, but it can still rebase, force-push or
+amend its way into your in-flight branch and any open pull request on it. Name that branch
+and say to leave it alone.
+
 Say what **is** safe, too. An agent that cannot verify anything writes untested code, so
-if `make check` is offline and safe, say that in the same breath — otherwise the list of
-prohibitions reads as "do not run anything".
+if the repo's check command is offline and safe, say that in the same breath — otherwise
+the list of prohibitions reads as "do not run anything".
 
 ## 3. Credentials: where they live, and how to use them unread
 
@@ -54,19 +62,31 @@ commit the file, and never echo a variable read from it.
 
 ## 4. Quote the repo rules that bear on this task
 
-Tell it to read `CLAUDE.md` **and** quote the three or four rules that actually apply. A
-pointer alone gets skimmed under time pressure; a quoted rule sitting in the prompt is
-still there when the agent is deciding what to do at step nine.
+Tell it to read the repo's rules file, `CLAUDE.md` or `AGENTS.md` or whatever it uses,
+**and** quote the three or four rules that actually apply. A pointer alone gets skimmed
+under time pressure; a quoted rule sitting in the prompt is still there when the agent is
+deciding what to do at step nine.
 
 Choose by relevance, not by importance. For work touching persistence, quote the personal
 data rule and the secrets rule. For work adding a tool, quote the one-language rule. Three
 that bite are worth more than all eight recited.
 
-## 5. Apply the authority rule
+## 5. Name the decisions that are not the offshoot's to take
 
-If the work touches a dependency or vendor, personal data or what gets persisted, auth or
-secrets, a contract with another system, or deployment topology, the offshoot may not
-simply implement it. Say so explicitly, and say what to do instead:
+Some work is not a task but a decision wearing a task's clothes. If it touches a dependency
+or vendor, personal data or what gets persisted, auth or secrets, a contract with another
+system, or deployment topology, the offshoot may not simply implement it and hand back a
+finished thing. Say so explicitly, and give it a stopping point.
+
+The stopping point is whatever the repo already uses to hold a decision that has not been
+taken: a decision record at `status: proposed`, an ADR, an open issue, a design note, a
+draft pull request carrying the argument and nothing else. Name the artefact, name where it
+goes, and say that the work stops there. If the repo has no such convention, invent the
+stopping point in the brief itself: a short document at a named path setting out the
+options and the recommendation, and no implementation under it.
+
+In a repo whose `CLAUDE.md` carries an authority rule and a `docs/decision-records/` tree,
+that reads:
 
 > This touches deployment topology, so it is a consult-level decision under the authority
 > rule in `CLAUDE.md`. Write the decision record at `status: proposed`, with
@@ -74,26 +94,36 @@ simply implement it. Say so explicitly, and say what to do instead:
 > accepted — Markus decides, and a proposed record is the correct artefact for a decision
 > that has not been taken yet.
 
-Without this, a capable agent delivers a finished, well-tested implementation of a decision
-that was never his to skip.
+The load-bearing part is not the format, it is the sentence that separates writing the
+proposal from acting on it. Without it, a capable agent delivers a finished, well-tested
+implementation of a decision that was never the offshoot's to take.
 
 ## 6. The local mechanics that bite
 
-These cost a session an hour each and are invisible from inside a fresh worktree. The
-specifics differ per repo; what generalises is that you have to write them down.
+These cost a session an hour each and are invisible from inside a fresh worktree, because
+they live in your head rather than in the repo. Three kinds are worth hunting for every
+time. The instances under them come from one repo and are there to show the shape, so
+write down your own rather than passing these along.
 
-- **`gh` and a second organisation.** When `gh` is logged in as several accounts, the
-  active one often cannot resolve `Acme-Co/...`, so `gh pr create` fails with "Could not
-  resolve to a Repository" — which looks like a missing repository or a permissions
-  problem and is neither. Run `gh auth switch --hostname github.com --user work-markus`
-  first, pass `--repo Acme-Co/invoicer` explicitly, and switch back to `personal-markus`
-  afterwards so the environment is left as it was found.
-- **Counts stated as prose go stale.** Adding a decision record falsifies the record
-  counts written out in `CLAUDE.md` and in `docs/decision-records/index.md`. Fix them in
-  the same change, along with any cross-reference the change made wrong — Markus wants
-  that repo-wide rather than left for later.
-- **`make check` must pass** before anything is handed back, and the test count should not
-  drop.
+- **A tool that fails with the wrong error.** Anything where the failure message points at
+  the wrong cause will burn a session on a false trail. In the repo these came from it is
+  `gh` with more than one account logged in: the active one cannot resolve the other
+  organisation, so `gh pr create` fails with "Could not resolve to a Repository", which
+  reads as a missing repository or a permissions problem and is neither. The brief said to
+  `gh auth switch` to the account that can see that organisation first, pass the `--repo`
+  explicitly, and switch back afterwards so the environment is left as it was found. Yours
+  will be a different tool. Name the symptom as well as the fix, so the agent recognises it
+  when it hits.
+- **Facts duplicated in prose, which go stale the moment you add one.** Counts, indexes,
+  tables of contents, cross-references, anything a human wrote out by hand that the change
+  falsifies. In that repo, adding a decision record falsified the counts stated in
+  `CLAUDE.md` and in `docs/decision-records/index.md`, and the house rule was to fix them in
+  the same change rather than leave it for later. Find the equivalent in your repo and say
+  so, because an agent will not go looking.
+- **The verification command, and the bar it has to clear.** Name it, say it is safe to
+  run, and say what counts as passing: not only a green exit code but, where it applies, no
+  drop in test count. An agent that is not told how to verify either invents a check or
+  ships unverified.
 
 ## 7. End with what good looks like
 
@@ -197,6 +227,7 @@ against the work is a better outcome than a scanner nobody will keep.
 - Does every prohibition carry a reason?
 - Is the boundary made of names — commands, modules, hosts — rather than adjectives?
 - Does it say what is safe to run, not only what is forbidden?
-- Does the task trip the authority rule, and if so does the brief stop at `proposed`?
+- Is the in-flight branch, and any open pull request on it, named as off-limits?
+- Is this a decision rather than a task, and if so does the brief stop at a proposal?
 - Is "done" observable, and is declining to build explicitly allowed?
 - Is there any secret in the prompt text? There must be none.
