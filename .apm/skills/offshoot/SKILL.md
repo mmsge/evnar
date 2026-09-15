@@ -1,5 +1,6 @@
 ---
 name: offshoot
+version: 1.0.0
 description: Turn a one-line request into a well-scoped background task via the spawn_task tool, which offers Markus a chip that starts a fresh session in an isolated worktree. Use whenever he wants work done somewhere other than here — "offshoot", "spin this off", "spin off a session", "fire off a session", "start a new session for X", "background task", "do that again for X", "queue that up", "hand this to another agent", "not now, but later" — and use it proactively before calling spawn_task by hand, because an unbriefed offshoot arrives with no memory of this conversation and improvises past the constraints that matter.
 ---
 

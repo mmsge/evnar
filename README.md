@@ -29,32 +29,52 @@ Wrapperen krev APM og køyrer same installasjon med standardmålet
 
 ## Last ned enkeltevner
 
-Kvar evne blir pakka som eit sjølvstendig arkiv og lagt ut på
-[Releases](https://github.com/mmsge/evnar/releases). Du treng verken APM eller
-klone av repoet for å bruke ei enkelt evne.
+Kvar evne har si eiga utgåve på
+[Releases](https://github.com/mmsge/evnar/releases), med eigen tagg på forma
+`<evne>-v<versjon>`. Det er utgåvesida du deler når du vil senda éi evne til
+nokon:
+
+<https://github.com/mmsge/evnar/releases/tag/offshoot-v1.0.0>
+
+Du treng verken APM eller klone av repoet for å bruke ei enkelt evne:
 
 ```bash
-# alltid ferskaste versjon
-curl -LO https://github.com/mmsge/evnar/releases/download/latest/git.skill
-
-# ein fast versjon
-curl -LO https://github.com/mmsge/evnar/releases/download/v0.1.0/git.skill
+curl -LO https://github.com/mmsge/evnar/releases/download/offshoot-v1.0.0/offshoot.skill
+unzip offshoot.skill -d ~/.claude/skills/     # gjev ~/.claude/skills/offshoot/SKILL.md
 ```
 
-Arkivet inneheld mappa til evna, så du pakkar det rett ut der evnene bur:
+Arkivet inneheld mappa til evna, så du pakkar det rett ut der evnene bur. Bruk
+`.claude/skills/` i eit prosjekt om evna berre skal gjelda der.
 
-```bash
-unzip git.skill -d ~/.claude/skills/     # gjev ~/.claude/skills/git/SKILL.md
+Kvar evne finst i to utgåver med same innhald: `.skill` og `.zip`. Bruk `.zip`
+når du lastar opp til claude.ai, som berre godtek det filnamnet. `SHA256SUMS`
+ligg ved for verifisering.
+
+Ein `vX.Y.Z`-tagg på repoet lagar i tillegg eit samla øyeblikksbilete med
+`evnar-all-skills.zip` og `skills.json`, for deg som vil ha alt på ein gong.
+
+## Versjonering
+
+Versjonen til ei evne står i frontmatteren i `SKILL.md`, og det er han som
+styrer utgjevinga:
+
+```yaml
+---
+name: offshoot
+version: 1.0.0
+description: ...
+---
 ```
 
-Kvar evne finst i to utgåver med same innhald: `.skill` og `.zip`. Bruk
-`.zip` når du lastar opp til claude.ai, som berre godtek det filnamnet.
-`evnar-all-skills.zip` inneheld alle evnene, og `skills.json` og `SHA256SUMS`
-ligg ved for skripting og verifisering.
+Bump versjonen når du endrar evna, etter semver: `Z` for ein retting, `Y` for
+ny funksjonalitet som ikkje bryt noko, `X` for ei endring som bryter. Neste
+push til `hovud` lagar utgåva. Lèt du versjonen stå, skjer ingenting, og ei
+publisert utgåve blir aldri skriven over. Ein pull request som endrar ei evne
+utan å bumpa versjonen feiler i CI, nettopp for at endringa ikkje skal bli
+liggjande uutgjeven.
 
-Pakkinga skjer i [`pack-skills.yml`](.github/workflows/pack-skills.yml). Kvar
-push til `hovud` friskar opp `latest`, og ein `vX.Y.Z`-tagg lagar ei permanent
-utgåve. Du kan køyre same bygg lokalt:
+Pakkinga skjer i [`pack-skills.yml`](.github/workflows/pack-skills.yml). Du kan
+køyre same bygg lokalt:
 
 ```bash
 pip install pyyaml
@@ -75,15 +95,22 @@ python3 .github/scripts/pack_skills.py
 
 ## Evner
 
-| Evne | Beskriving |
-|---|---|
-| [`obsidian-template`](.apm/skills/obsidian-template/SKILL.md) | Lag nye Obsidian-templatar tilpassa Markus sin vault |
-| [`mastodon`](.apm/skills/mastodon/SKILL.md) | Hent og vis siste innlegg frå @markus@skvip.lol |
-| [`new-project-scaffold`](.apm/skills/new-project-scaffold/SKILL.md) | Set opp nye programvareprosjekt med komplett, produksjonsklar struktur |
-| [`books`](.apm/skills/books/SKILL.md) | Søk i lesehistorikk frå StoryGraph og Bookwyrm |
-| [`doctor-who`](.apm/skills/doctor-who/SKILL.md) | Slå opp, svar på og diskuter alt om Doctor Who |
-| [`session-start-hook`](.apm/skills/session-start-hook/SKILL.md) | Lag SessionStart-hooks for Claude Code på nettet |
-| [`offshoot`](.apm/skills/offshoot/SKILL.md) | Spinn arbeid ut i ei eiga økt med ein brief som held på rammene |
+Versjonsnummeret lenkjer til utgåvesida for evna.
+
+| Evne | Versjon | Beskriving |
+|---|---|---|
+| [`books`](.apm/skills/books/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/books-v1.0.0) | Søk i lesehistorikk frå StoryGraph og Bookwyrm |
+| [`doctor-who`](.apm/skills/doctor-who/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/doctor-who-v1.0.0) | Slå opp, svar på og diskuter alt om Doctor Who |
+| [`favicon`](.apm/skills/favicon/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/favicon-v1.0.0) | Set opp favicon rett for eit webprosjekt, frå botnen eller som opprydding |
+| [`git`](.apm/skills/git/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/git-v1.0.0) | Git-arbeidsflyt frå lokal commit til pull request, kodegjennomgang og CI |
+| [`lastfm-scrobble-report`](.apm/skills/lastfm-scrobble-report/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/lastfm-scrobble-report-v1.0.0) | Lag ein Last.fm-scrobblerapport for ein artist, som PDF og CSV |
+| [`mastodon`](.apm/skills/mastodon/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/mastodon-v1.0.0) | Hent og vis siste innlegg frå @markus@skvip.lol |
+| [`new-project-scaffold`](.apm/skills/new-project-scaffold/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/new-project-scaffold-v1.0.0) | Set opp nye programvareprosjekt med komplett, produksjonsklar struktur |
+| [`obsidian-template`](.apm/skills/obsidian-template/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/obsidian-template-v1.0.0) | Lag nye Obsidian-templatar tilpassa Markus sin vault |
+| [`offshoot`](.apm/skills/offshoot/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/offshoot-v1.0.0) | Spinn arbeid ut i ei eiga økt med ein brief som held på rammene |
+| [`project-review`](.apm/skills/project-review/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/project-review-v1.0.0) | Analyser eit prosjekt og lag ei rangert liste med forbetringsframlegg |
+| [`repo-settings`](.apm/skills/repo-settings/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/repo-settings-v1.0.0) | Sett standardinnstillingar på eit GitHub-repo |
+| [`session-start-hook`](.apm/skills/session-start-hook/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/session-start-hook-v1.0.0) | Lag SessionStart-hooks for Claude Code på nettet |
 
 ## Nyttige kommandoar
 

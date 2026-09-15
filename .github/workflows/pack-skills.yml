@@ -1,14 +1,18 @@
 name: Pack skills
 
 # Packages every skill under .apm/skills/ into a standalone <name>.skill archive
-# and publishes them as release assets:
+# and gives each one its own release, so a single skill can be shared as a link
+# to a page rather than a link to a file:
 #
-#   push to hovud  -> refreshes the rolling "latest" release
-#   push a v* tag  -> cuts a permanent versioned release
-#   pull request   -> builds and validates only, publishes nothing
+#   https://github.com/mmsge/evnar/releases/tag/offshoot-v1.0.0
 #
-# Stable download URL:
-#   https://github.com/mmsge/evnar/releases/download/latest/<name>.skill
+# The `version:` in a skill's SKILL.md frontmatter decides everything. Bump it
+# and the next push to hovud cuts that skill's release; leave it and the
+# existing release is untouched. A published archive is never rewritten.
+#
+#   push to hovud  -> releases any skill whose version has no release yet
+#   push a v* tag  -> cuts a repo-wide snapshot carrying the all-skills bundle
+#   pull request   -> builds, validates, and checks that edited skills were bumped
 
 on:
   push:
@@ -17,7 +21,7 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Never let two pushes race to update the same rolling release.
+# Never let two pushes race to create the same release.
 concurrency:
   group: pack-skills-${{ github.ref }}
   cancel-in-progress: false
@@ -30,6 +34,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # A pull request diffs versions against its base branch, which needs
+          # history. (Do not make this conditional: in an Actions expression 0
+          # is falsy, so `cond && 0 || 1` is always 1.)
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -38,20 +47,20 @@ jobs:
       - name: Install build dependencies
         run: pip install pyyaml
 
-      - name: Resolve release tag
+      - name: Resolve repo-wide release tag
         id: meta
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             tag="${GITHUB_REF#refs/tags/}"
-            # A versioned release must agree with apm.yml, so the package has
+            # A versioned snapshot must agree with apm.yml, so the package has
             # exactly one version number.
             echo "expect=--expect-version $tag" >> "$GITHUB_OUTPUT"
           else
-            tag="latest"
+            tag="v$(python3 -c "import yaml;print(yaml.safe_load(open('apm.yml'))['version'])")"
             echo "expect=" >> "$GITHUB_OUTPUT"
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "Building for tag: $tag"
+          echo "Repo-wide tag: $tag"
 
       - name: Validate and pack skills
         run: |
@@ -60,13 +69,18 @@ jobs:
             --tag "${{ steps.meta.outputs.tag }}" \
             ${{ steps.meta.outputs.expect }}
 
-      - name: Summarise
+      - name: Check edited skills were version-bumped
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.base_ref }}
         run: |
-          {
-            echo "## Packed skills"
-            echo
-            cat dist/SHA256SUMS | sed 's/^/    /'
-          } >> "$GITHUB_STEP_SUMMARY"
+          # checkout leaves the base branch's remote ref unreliable; fetch it
+          # by name so the diff has something to stand on.
+          git fetch --no-tags origin "+refs/heads/$BASE:refs/remotes/origin/$BASE"
+          python3 .github/scripts/check_version_bumps.py --base "origin/$BASE"
+
+      - name: Summarise
+        run: cat dist/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload build output
         uses: actions/upload-artifact@v4
@@ -75,25 +89,16 @@ jobs:
           path: dist/
           if-no-files-found: error
 
-      - name: Publish rolling "latest" release
+      - name: Publish a release for every newly versioned skill
         if: github.event_name == 'push' && github.ref == 'refs/heads/hovud'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: Latest skills
-          body_path: dist/RELEASE_NOTES.md
-          # Kept as a prerelease so /releases/latest/ still resolves to the
-          # newest semver release, while /releases/download/latest/ stays fresh.
-          prerelease: true
-          make_latest: false
-          files: |
-            dist/*.skill
-            dist/*.zip
-            dist/skills.json
-            dist/SHA256SUMS
-          fail_on_unmatched_files: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # This step is the one CI never gets to rehearse, since it only runs
+          # on hovud. Name the repo rather than leaning on gh inferring it.
+          GH_REPO: ${{ github.repository }}
+        run: .github/scripts/publish_releases.sh
 
-      - name: Publish versioned release
+      - name: Publish repo-wide snapshot
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
@@ -102,8 +107,7 @@ jobs:
           body_path: dist/RELEASE_NOTES.md
           make_latest: true
           files: |
-            dist/*.skill
-            dist/*.zip
+            dist/evnar-all-skills.zip
             dist/skills.json
             dist/SHA256SUMS
           fail_on_unmatched_files: true

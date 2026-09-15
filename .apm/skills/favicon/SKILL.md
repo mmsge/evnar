@@ -1,5 +1,6 @@
 ---
 name: favicon
+version: 1.0.0
 description: >
   Set up favicons correctly for any web project — both creating from scratch and fixing
   broken or incomplete existing favicon implementations. Use this skill whenever a user

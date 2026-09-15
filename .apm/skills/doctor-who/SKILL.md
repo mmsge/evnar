@@ -1,5 +1,6 @@
 ---
 name: doctor-who
+version: 1.0.0
 description: >
   Look up, answer, discuss, or explain anything related to Doctor Who — the British sci-fi TV show
   and its vast expanded universe. Use this skill whenever the user asks about Doctors, companions,

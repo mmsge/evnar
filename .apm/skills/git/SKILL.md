@@ -1,5 +1,6 @@
 ---
 name: git
+version: 1.0.0
 description: >
   Expert git workflow assistant covering everything from local commits and branch management to
   pull requests, code review, and CI/Actions checks. Use this skill whenever the user is working

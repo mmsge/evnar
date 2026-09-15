@@ -1,5 +1,6 @@
 ---
 name: mastodon
+version: 1.0.0
 description: Fetch and display Markus's latest Mastodon posts from @markus@skvip.lol. Use this skill whenever Markus asks about his Mastodon posts, toots, activity, what he has posted recently, his fediverse posts, or anything related to his Mastodon account. Always use this skill — do NOT try to web search or guess post content.
 ---
 
