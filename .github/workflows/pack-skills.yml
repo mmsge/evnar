@@ -93,6 +93,9 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/hovud'
         env:
           GH_TOKEN: ${{ github.token }}
+          # This step is the one CI never gets to rehearse, since it only runs
+          # on hovud. Name the repo rather than leaning on gh inferring it.
+          GH_REPO: ${{ github.repository }}
         run: .github/scripts/publish_releases.sh
 
       - name: Publish repo-wide snapshot
