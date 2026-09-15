@@ -1,5 +1,6 @@
 ---
 name: session-start-hook
+version: 1.0.0
 description: Creating and developing startup hooks for Claude Code on the web. Use when the user wants to set up a repository for Claude Code on the web, create a SessionStart hook to ensure their project can run tests and linters during web sessions.
 ---
 

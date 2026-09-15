@@ -1,5 +1,6 @@
 ---
 name: books
+version: 1.0.0
 description: >
   Query Markus's personal reading history across StoryGraph and Bookwyrm.
   Use this skill whenever Markus asks about books he has read, when he read something,

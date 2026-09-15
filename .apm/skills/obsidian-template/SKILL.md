@@ -1,5 +1,6 @@
 ---
 name: obsidian-template
+version: 1.0.0
 description: >
   Lag nye Obsidian-templatar tilpassa Markus sin vault. Bruk denne skillen kvar gong Markus bed om ein ny Obsidian-template, eit templateutkast, eller vil lage ein ny notattype i Obsidian. Triggarar inkluderer: "lag ein template", "ny template for", "Obsidian-template", "templateutkast", "templat", "notatmal". Bruk alltid denne skillen for template-arbeid — ikkje improvisér ein struktur utan han.
 ---

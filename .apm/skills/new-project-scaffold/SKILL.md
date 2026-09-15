@@ -1,5 +1,6 @@
 ---
 name: new-project-scaffold
+version: 1.0.0
 description: >
   Bootstrap new software projects in blank/empty repositories with a complete, production-ready structure.
   Use this skill whenever a user wants to start a new project, scaffold a repository, bootstrap a codebase,

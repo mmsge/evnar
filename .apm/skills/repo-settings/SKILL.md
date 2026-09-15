@@ -1,5 +1,6 @@
 ---
 name: repo-settings
+version: 1.0.0
 description: Apply standard GitHub repository settings (squash-only merging, PR housekeeping, feature toggles) to a repo from the bundled settings.json. Use when creating or setting up a new repository, when asked to standardise or fix repo settings, or right after gh repo create.
 ---
 

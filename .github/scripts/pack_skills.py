@@ -1,13 +1,31 @@
 #!/usr/bin/env python3
-"""Package every skill under .apm/skills/ as a self-contained archive.
+"""Package every skill under .apm/skills/ as a self-contained, versioned archive.
 
-Each skill becomes dist/<name>.skill (and an identical dist/<name>.zip) whose
-single top-level entry is the skill folder, which is the layout Claude expects:
+Each skill is released on its own, under its own tag, so a single skill can be
+shared as a link to a release page rather than a link to a raw file:
 
-    git.skill
-    └── git/
-        ├── SKILL.md
-        └── references/
+    https://github.com/mmsge/evnar/releases/tag/offshoot-v1.0.0
+
+The version comes from the `version:` field in the skill's SKILL.md
+frontmatter. Bump it when you change the skill and CI cuts the release; leave
+it alone and CI leaves the existing release alone. Versions are semver:
+
+    Z  a fix or a wording change
+    Y  a new, backwards-compatible capability
+    X  a change that breaks how the skill is used
+
+Output layout:
+
+    dist/
+      offshoot/
+        offshoot.skill        the archive, one top-level folder named for the skill
+        offshoot.zip          byte-identical copy; claude.ai only accepts .zip
+        RELEASE_NOTES.md      body for this skill's release
+        SHA256SUMS
+      evnar-all-skills.zip    every skill, for the repo-wide vX.Y.Z release
+      skills.json             name, version, tag, size and digest for every skill
+      SHA256SUMS
+      RELEASE_NOTES.md        body for the repo-wide vX.Y.Z release
 
 Archives are byte-for-byte reproducible: entries are sorted and stamped with a
 fixed timestamp, so an unchanged skill always produces the same bytes.
@@ -41,6 +59,8 @@ FIXED_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
 EXCLUDED_NAMES = {".DS_Store", "__pycache__", ".pytest_cache", ".ruff_cache"}
 EXCLUDED_SUFFIXES = {".pyc", ".pyo"}
+
+SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
 
 # Descriptions are long; the release table gets a trimmed version.
 TABLE_DESCRIPTION_LIMIT = 160
@@ -127,6 +147,17 @@ def validate(skill_dir: Path) -> tuple[dict | None, list[str]]:
     if not description or not normalise(description):
         errors.append(f"{skill_dir.name}: frontmatter is missing 'description'")
 
+    version = meta.get("version")
+    if version is None:
+        errors.append(
+            f"{skill_dir.name}: frontmatter is missing 'version' "
+            f"(add e.g. 'version: 1.0.0' under 'name')"
+        )
+    elif not SEMVER.match(str(version)):
+        errors.append(
+            f"{skill_dir.name}: version '{version}' is not semver X.Y.Z"
+        )
+
     return meta, errors
 
 
@@ -147,35 +178,83 @@ def package_version() -> str | None:
     return str(version) if version is not None else None
 
 
-def render_release_notes(entries: list[dict], repo: str, tag: str) -> str:
+def trimmed(description: str) -> str:
+    if len(description) > TABLE_DESCRIPTION_LIMIT:
+        description = description[:TABLE_DESCRIPTION_LIMIT].rstrip() + "…"
+    return description.replace("|", "\\|")
+
+
+def render_skill_notes(entry: dict, repo: str) -> str:
+    """Body for one skill's own release page."""
+    name, tag = entry["name"], entry["tag"]
+    base = f"https://github.com/{repo}/releases/download/{tag}"
+    return "\n".join(
+        [
+            f"`{name}` {entry['version']}, packaged as a standalone skill.",
+            "",
+            entry["description"],
+            "",
+            "## Install",
+            "",
+            "```bash",
+            f"curl -LO {base}/{name}.skill",
+            f"unzip {name}.skill -d ~/.claude/skills/",
+            "```",
+            "",
+            f"That gives `~/.claude/skills/{name}/SKILL.md`. Use a project's",
+            "`.claude/skills/` instead to scope it to one repository.",
+            "",
+            f"For claude.ai, upload [`{name}.zip`]({base}/{name}.zip) instead. It is",
+            "byte-identical and exists only because that uploader rejects any other",
+            "extension.",
+            "",
+            "## Verify",
+            "",
+            "```",
+            f"{entry['sha256']}  {name}.skill",
+            "```",
+            "",
+            f"{entry['files']} files, {entry['size']} bytes. Built reproducibly from "
+            f"[`.apm/skills/{name}/`](https://github.com/{repo}/tree/hovud/.apm/skills/{name}).",
+        ]
+    ) + "\n"
+
+
+def render_package_notes(entries: list[dict], repo: str, tag: str) -> str:
+    """Body for the repo-wide vX.Y.Z release carrying the all-skills bundle."""
     base = f"https://github.com/{repo}/releases/download/{tag}"
     lines = [
-        f"{len(entries)} skills, each packaged as a standalone archive.",
-        "",
-        "Download one, unzip it into `~/.claude/skills/` (or your project's",
-        "`.claude/skills/`), and it is ready to use. The `.zip` copy is byte-identical",
-        "and exists because claude.ai's uploader only accepts that extension.",
-        "",
-        "| Skill | Description | Download |",
-        "|---|---|---|",
-    ]
-    for entry in entries:
-        description = entry["description"]
-        if len(description) > TABLE_DESCRIPTION_LIMIT:
-            description = description[:TABLE_DESCRIPTION_LIMIT].rstrip() + "…"
-        description = description.replace("|", "\\|")
-        name = entry["name"]
-        lines.append(
-            f"| `{name}` | {description} "
-            f"| [`{name}.skill`]({base}/{name}.skill) · [`.zip`]({base}/{name}.zip) |"
-        )
-    lines += [
+        f"Snapshot of all {len(entries)} skills at {package_name()} {tag}.",
         "",
         f"Every skill in one archive: [`{package_name()}-all-skills.zip`]"
         f"({base}/{package_name()}-all-skills.zip)",
         "",
+        "Skills are also released individually, and an individual release is the",
+        "better thing to link to when you want to share just one.",
+        "",
+        "| Skill | Version | Description |",
+        "|---|---|---|",
+    ]
+    for entry in entries:
+        lines.append(
+            f"| [`{entry['name']}`](https://github.com/{repo}/releases/tag/{entry['tag']}) "
+            f"| {entry['version']} | {trimmed(entry['description'])} |"
+        )
+    lines += [
+        "",
         "`SHA256SUMS` and `skills.json` are attached for verification and scripting.",
     ]
+    return "\n".join(lines) + "\n"
+
+
+def render_summary(entries: list[dict]) -> str:
+    """Job-summary table for the Actions run."""
+    lines = ["## Packed skills", "", "| Skill | Version | Tag | SHA256 |", "|---|---|---|---|"]
+    for entry in entries:
+        lines.append(
+            f"| `{entry['name']}` | {entry['version']} "
+            f"| `{entry['tag']}` | `{entry['sha256'][:16]}…` |"
+        )
     return "\n".join(lines) + "\n"
 
 
@@ -192,8 +271,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--tag",
-        default="latest",
-        help="Release tag used to build download links in the release notes.",
+        default=None,
+        help="Repo-wide release tag used in the bundle's release notes.",
     )
     args = parser.parse_args()
 
@@ -234,22 +313,35 @@ def main() -> int:
     entries: list[dict] = []
     for skill_dir, meta in validated:
         name = skill_dir.name
-        skill_path = DIST_DIR / f"{name}.skill"
+        version = str(meta["version"])
+        skill_out = DIST_DIR / name
+        skill_out.mkdir()
+
+        skill_path = skill_out / f"{name}.skill"
         with zipfile.ZipFile(skill_path, "w", zipfile.ZIP_DEFLATED) as archive:
             add_skill_to_zip(archive, skill_dir)
-        shutil.copy2(skill_path, DIST_DIR / f"{name}.zip")
+        shutil.copy2(skill_path, skill_out / f"{name}.zip")
 
-        entries.append(
-            {
-                "name": name,
-                "description": normalise(meta["description"]),
-                "file": f"{name}.skill",
-                "size": skill_path.stat().st_size,
-                "sha256": sha256_of(skill_path),
-                "files": len(iter_skill_files(skill_dir)),
-            }
+        entry = {
+            "name": name,
+            "version": version,
+            "tag": f"{name}-v{version}",
+            "description": normalise(meta["description"]),
+            "file": f"{name}.skill",
+            "size": skill_path.stat().st_size,
+            "sha256": sha256_of(skill_path),
+            "files": len(iter_skill_files(skill_dir)),
+        }
+        entries.append(entry)
+
+        (skill_out / "RELEASE_NOTES.md").write_text(
+            render_skill_notes(entry, args.repo), encoding="utf-8"
         )
-        print(f"packed {name}.skill ({entries[-1]['files']} files, {entries[-1]['size']} bytes)")
+        (skill_out / "SHA256SUMS").write_text(
+            f"{entry['sha256']}  {name}.skill\n{entry['sha256']}  {name}.zip\n",
+            encoding="utf-8",
+        )
+        print(f"packed {entry['tag']} ({entry['files']} files, {entry['size']} bytes)")
 
     bundle_path = DIST_DIR / f"{package_name()}-all-skills.zip"
     with zipfile.ZipFile(bundle_path, "w", zipfile.ZIP_DEFLATED) as archive:
@@ -261,15 +353,17 @@ def main() -> int:
         json.dumps(entries, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
-    checksum_lines = []
-    for path in sorted(DIST_DIR.iterdir()):
-        if path.suffix in {".skill", ".zip"}:
-            checksum_lines.append(f"{sha256_of(path)}  {path.name}")
+    checksum_lines = [f"{sha256_of(bundle_path)}  {bundle_path.name}"]
+    for entry in entries:
+        checksum_lines.append(f"{entry['sha256']}  {entry['name']}.skill")
     (DIST_DIR / "SHA256SUMS").write_text("\n".join(checksum_lines) + "\n", encoding="utf-8")
 
+    package_tag = args.tag or f"v{package_version()}"
     (DIST_DIR / "RELEASE_NOTES.md").write_text(
-        render_release_notes(entries, args.repo, args.tag), encoding="utf-8"
+        render_package_notes(entries, args.repo, package_tag), encoding="utf-8"
     )
+
+    (DIST_DIR / "SUMMARY.md").write_text(render_summary(entries), encoding="utf-8")
 
     print(f"\n{len(entries)} skills written to {DIST_DIR.relative_to(REPO_ROOT)}/")
     return 0

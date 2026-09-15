@@ -1,5 +1,6 @@
 ---
 name: project-review
+version: 1.0.0
 description: >
   Analyze a software project and produce a ranked Markdown report of suggested
   improvements — both optimizations of existing features and entirely new ones.

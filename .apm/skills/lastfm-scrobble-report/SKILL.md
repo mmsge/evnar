@@ -1,5 +1,6 @@
 ---
 name: lastfm-scrobble-report
+version: 1.0.0
 description: >
   Generate a comprehensive Last.fm scrobble report for any artist in the user's
   listening history. Produces a colour-coded PDF with per-album track tables and
