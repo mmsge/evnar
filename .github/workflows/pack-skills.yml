@@ -35,9 +35,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # A pull request needs the base branch present to diff versions
-          # against; nothing else here needs history.
-          fetch-depth: ${{ github.event_name == 'pull_request' && 0 || 1 }}
+          # A pull request diffs versions against its base branch, which needs
+          # history. (Do not make this conditional: in an Actions expression 0
+          # is falsy, so `cond && 0 || 1` is always 1.)
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -70,9 +71,13 @@ jobs:
 
       - name: Check edited skills were version-bumped
         if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.base_ref }}
         run: |
-          python3 .github/scripts/check_version_bumps.py \
-            --base "origin/${{ github.base_ref }}"
+          # checkout leaves the base branch's remote ref unreliable; fetch it
+          # by name so the diff has something to stand on.
+          git fetch --no-tags origin "+refs/heads/$BASE:refs/remotes/origin/$BASE"
+          python3 .github/scripts/check_version_bumps.py --base "origin/$BASE"
 
       - name: Summarise
         run: cat dist/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"

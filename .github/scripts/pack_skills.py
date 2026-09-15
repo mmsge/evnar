@@ -24,6 +24,7 @@ Output layout:
         SHA256SUMS
       evnar-all-skills.zip    every skill, for the repo-wide vX.Y.Z release
       skills.json             name, version, tag, size and digest for every skill
+      RELEASES.tsv            tag, name, version per line, for the publish step
       SHA256SUMS
       RELEASE_NOTES.md        body for the repo-wide vX.Y.Z release
 
@@ -364,6 +365,12 @@ def main() -> int:
     )
 
     (DIST_DIR / "SUMMARY.md").write_text(render_summary(entries), encoding="utf-8")
+
+    # Tab-separated so publish_releases.sh can read it without a JSON parser.
+    (DIST_DIR / "RELEASES.tsv").write_text(
+        "".join(f"{e['tag']}\t{e['name']}\t{e['version']}\n" for e in entries),
+        encoding="utf-8",
+    )
 
     print(f"\n{len(entries)} skills written to {DIST_DIR.relative_to(REPO_ROOT)}/")
     return 0

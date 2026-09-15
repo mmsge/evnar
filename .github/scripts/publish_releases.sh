@@ -14,10 +14,10 @@ set -euo pipefail
 
 dist="${DIST_DIR:-dist}"
 target="${GITHUB_SHA:-}"
-manifest="$dist/skills.json"
+manifest="$dist/RELEASES.tsv"
 
-if [[ ! -f "$manifest" ]]; then
-  echo "error: $manifest not found; run pack_skills.py first" >&2
+if [[ ! -s "$manifest" ]]; then
+  echo "error: $manifest is missing or empty; run pack_skills.py first" >&2
   exit 1
 fi
 
@@ -33,19 +33,19 @@ while IFS=$'\t' read -r tag name version; do
   fi
 
   echo "create $tag"
+  extra=()
+  if [[ -n "$target" ]]; then
+    extra+=(--target "$target")
+  fi
   gh release create "$tag" \
     --title "$name $version" \
     --notes-file "$dist/$name/RELEASE_NOTES.md" \
-    ${target:+--target "$target"} \
+    "${extra[@]}" \
     "$dist/$name/$name.skill" \
     "$dist/$name/$name.zip" \
     "$dist/$name/SHA256SUMS"
   created=$((created + 1))
-done < <(python3 -c '
-import json, sys
-for e in json.load(open(sys.argv[1])):
-    print(f"{e[\"tag\"]}\t{e[\"name\"]}\t{e[\"version\"]}")
-' "$manifest")
+done < "$manifest"
 
 echo
 echo "$created release(s) created, $skipped already present"
