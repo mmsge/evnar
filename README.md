@@ -108,6 +108,7 @@ Versjonsnummeret lenkjer til utgåvesida for evna.
 | [`new-project-scaffold`](.apm/skills/new-project-scaffold/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/new-project-scaffold-v1.0.0) | Set opp nye programvareprosjekt med komplett, produksjonsklar struktur |
 | [`obsidian-template`](.apm/skills/obsidian-template/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/obsidian-template-v1.0.0) | Lag nye Obsidian-templatar tilpassa Markus sin vault |
 | [`offshoot`](.apm/skills/offshoot/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/offshoot-v1.0.0) | Spinn arbeid ut i ei eiga økt med ein brief som held på rammene |
+| [`offshoot-portable`](.apm/skills/offshoot-portable/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/offshoot-portable-v1.0.0) | Same som `offshoot`, men for Codex, Copilot og ChatGPT òg |
 | [`project-review`](.apm/skills/project-review/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/project-review-v1.0.0) | Analyser eit prosjekt og lag ei rangert liste med forbetringsframlegg |
 | [`repo-settings`](.apm/skills/repo-settings/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/repo-settings-v1.0.0) | Sett standardinnstillingar på eit GitHub-repo |
 | [`session-start-hook`](.apm/skills/session-start-hook/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/session-start-hook-v1.0.0) | Lag SessionStart-hooks for Claude Code på nettet |
@@ -122,4 +123,6 @@ apm audit
 apm pack
 ```
 
-Sjå [docs/APM.md](docs/APM.md) for repo-spesifikke notat.
+Sjå [docs/APM.md](docs/APM.md) for repo-spesifikke notat, og
+[docs/offshoot-portable-install.md](docs/offshoot-portable-install.md) for installasjonsstiane
+til `offshoot-portable` i dei ulike klientane.
