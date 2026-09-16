@@ -34,12 +34,12 @@ Kvar evne har si eiga utgåve på
 `<evne>-v<versjon>`. Det er utgåvesida du deler når du vil senda éi evne til
 nokon:
 
-<https://github.com/mmsge/evnar/releases/tag/offshoot-v1.0.0>
+<https://github.com/mmsge/evnar/releases/tag/offshoot-v1.1.0>
 
 Du treng verken APM eller klone av repoet for å bruke ei enkelt evne:
 
 ```bash
-curl -LO https://github.com/mmsge/evnar/releases/download/offshoot-v1.0.0/offshoot.skill
+curl -LO https://github.com/mmsge/evnar/releases/download/offshoot-v1.1.0/offshoot.skill
 unzip offshoot.skill -d ~/.claude/skills/     # gjev ~/.claude/skills/offshoot/SKILL.md
 ```
 
@@ -107,8 +107,8 @@ Versjonsnummeret lenkjer til utgåvesida for evna.
 | [`mastodon`](.apm/skills/mastodon/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/mastodon-v1.0.0) | Hent og vis siste innlegg frå @markus@skvip.lol |
 | [`new-project-scaffold`](.apm/skills/new-project-scaffold/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/new-project-scaffold-v1.0.0) | Set opp nye programvareprosjekt med komplett, produksjonsklar struktur |
 | [`obsidian-template`](.apm/skills/obsidian-template/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/obsidian-template-v1.0.0) | Lag nye Obsidian-templatar tilpassa Markus sin vault |
-| [`offshoot`](.apm/skills/offshoot/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/offshoot-v1.0.0) | Spinn arbeid ut i ei eiga økt med ein brief som held på rammene |
-| [`offshoot-portable`](.apm/skills/offshoot-portable/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/offshoot-portable-v1.0.0) | Same som `offshoot`, men for Codex, Copilot og ChatGPT òg |
+| [`offshoot`](.apm/skills/offshoot/SKILL.md) | [1.1.0](https://github.com/mmsge/evnar/releases/tag/offshoot-v1.1.0) | Spinn arbeid ut i ei eiga økt med ein brief som held på rammene |
+| [`offshoot-portable`](.apm/skills/offshoot-portable/SKILL.md) | [1.1.0](https://github.com/mmsge/evnar/releases/tag/offshoot-portable-v1.1.0) | Same som `offshoot`, men for Codex, Copilot, ChatGPT og claude.ai/code òg |
 | [`project-review`](.apm/skills/project-review/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/project-review-v1.0.0) | Analyser eit prosjekt og lag ei rangert liste med forbetringsframlegg |
 | [`repo-settings`](.apm/skills/repo-settings/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/repo-settings-v1.0.0) | Sett standardinnstillingar på eit GitHub-repo |
 | [`session-start-hook`](.apm/skills/session-start-hook/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/session-start-hook-v1.0.0) | Lag SessionStart-hooks for Claude Code på nettet |

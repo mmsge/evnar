@@ -1,7 +1,7 @@
 ---
 name: offshoot-portable
-version: 1.0.0
-description: The cross-client build of `offshoot`. Use this one on Codex, GitHub Copilot or ChatGPT, or anywhere `spawn_task` is absent. Turn a one-line request into a well-scoped brief and hand it to an independent agent session, running elsewhere in its own isolated environment. Use whenever the user wants work done somewhere other than here — "offshoot", "spin this off", "spin off a session", "fire off a session", "start a new session for X", "background task", "delegate this", "do that again for X", "queue that up", "hand this to another agent", "not now, but later" — and use it proactively before calling any delegation tool by hand, because an unbriefed offshoot arrives with no memory of this conversation and improvises past the constraints that matter.
+version: 1.1.0
+description: The cross-client build of `offshoot`. Use this one on Codex, GitHub Copilot, ChatGPT or Claude Code on the web (claude.ai/code), or anywhere `spawn_task` is absent. Turn a one-line request into a well-scoped brief and hand it to an independent agent session, running elsewhere in its own isolated environment. Use whenever the user wants work done somewhere other than here — "offshoot", "spin this off", "spin off a session", "fire off a session", "start a new session for X", "background task", "delegate this", "do that again for X", "queue that up", "hand this to another agent", "not now, but later" — and use it proactively before calling any delegation tool by hand, because an unbriefed offshoot arrives with no memory of this conversation and improvises past the constraints that matter.
 ---
 
 # Offshoot (portable)
@@ -24,11 +24,20 @@ toolset, and do not go looking for a substitute if none is.
 
 | Client | Mechanism | Shape |
 |---|---|---|
-| Claude Code | `spawn_task` (often `mcp__ccd_session__spawn_task`) | Offers a chip that starts a fresh session in an isolated git worktree. |
+| Claude Code, local | `spawn_task` (often `mcp__ccd_session__spawn_task`) | Offers a chip that starts a fresh session in an isolated git worktree, on this machine. |
+| Claude Code on the web (claude.ai/code), or anywhere the Claude Code Remote MCP server is mounted | `create_session` (often `mcp__Claude_Code_Remote__create_session`) | Starts the session immediately, no chip. It runs in its own remote container, cloned fresh from the git remote, and nothing of this machine is reachable from it. |
 | Copilot, GitHub MCP server, remote | `create_pull_request_with_copilot` | Takes `problem_statement`, which is the brief. Starts a coding agent run in an ephemeral environment on its own branch, ending in one draft PR. |
 | Copilot, GitHub MCP server, local | `assign_copilot_to_issue` | Same agent, entered through an issue. Put the brief in `custom_instructions`. |
 | Copilot in VS Code | `#copilotCodingAgent` | Same agent again. It scopes locally first, then asks the user to confirm before it hands off. |
 | Codex, ChatGPT, anything else | none | Go to **Hand-over mode** at step 4. |
+
+One thing the table hides. The rows above the Copilot ones look alike and are not: a
+local worktree is a clean checkout beside a machine that still has the gitignored
+environment file, the logged-in `gh`, the local database, while every remote mechanism
+here has only what is pushed to the git remote plus what its environment supplies. A brief
+that says "the credentials are in the env file at the repo root" sends a remote agent
+looking for a file that is not there. `references/brief-anatomy.md` section 8 carries the
+three parts of the brief that change.
 
 Two rules about that table.
 
@@ -52,6 +61,11 @@ disk or in this conversation already.
   read; one that restates the whole file gets skimmed.
 - `git status` and `git log --oneline -5`. Uncommitted work, the current branch and any
   open pull request are things the offshoot must not disturb, and it cannot see them.
+- Heading for any of the remote mechanisms, also run `git remote -v` and
+  `git log --oneline origin/<branch>..HEAD`. Those agents clone from the remote, so
+  commits that exist only here are invisible to them. If the work builds on any of them,
+  push first and name the revision in the brief; if you cannot push, say which parts of
+  the brief the agent will not be able to see.
 - Scan this conversation for constraints you were given that still apply over there:
   a resource that must be left alone, a rate limit, a permission cache, a mailbox someone
   else is using. These are the most valuable thing you have, because they exist nowhere
@@ -111,6 +125,36 @@ One `spawn_task` call.
 - `prompt` — the brief. Long is fine. It is the whole inheritance.
 - `cwd` — omit unless the work plainly belongs in a different repository on this machine.
 
+### Spawn mode, Claude Code on the web
+
+One `create_session` call. It starts the session the moment you call it, with no chip in
+between, so the brief has to be finished before the call rather than after it, and the
+report back has to say that something is already running.
+
+- `prompt` — the brief. Long is fine. It is the whole inheritance.
+- `title` — imperative, under 60 characters, starts with a verb. There is no `tldr` field
+  here, so open the brief with the sentence you would have put in one: what you noticed
+  that prompted this, then what the new session will do.
+- `environment_id` — omit. It inherits this session's environment, which is the one whose
+  network policy and environment variables the brief assumes. Never invent an id;
+  `list_environments` is where real ones come from.
+- `source_url` and `source_revision` — omit for the repository you are already in. Give
+  them when the work belongs to another repository, and confirm that repository is in this
+  session's scope first, with `list_repos` and then `add_repo`, rather than discovering it
+  is not from inside the new session. This pair is the replacement for `cwd`: there is no
+  local disk over there to point at.
+- `model` — omit to inherit this session's, or name a smaller one when the work is
+  mechanical rather than a judgement call. Choose it deliberately and say which you chose.
+- `permission_mode` — omit to inherit. Never pass `plan`: it makes the session propose a
+  plan and then block on a human approval in the web UI, and nobody is watching it.
+- `outcome_branch` — only when the branch name matters to something outside the session,
+  such as a pull request that already exists. Otherwise let it derive one.
+- `tags` — worth setting when you spin off more than one piece of work, so they can be
+  listed together afterwards.
+
+The container is reclaimed when the session ends, so "what good looks like" has to be a
+pushed branch and a draft pull request rather than a file on a disk that goes away.
+
 ### Spawn mode, GitHub Copilot
 
 One tool call, whichever of the three you found.
@@ -150,3 +194,8 @@ Where the user can plausibly run it, name the surface rather than waving at one:
 The title, the constraints you encoded, anything you assumed, and which mechanism you
 used. If you were in hand-over mode, say that plainly. Do not also start doing the work
 yourself.
+
+After a `create_session` call, give the user the session id along with the title, say
+plainly that it is already running rather than waiting on a click, and name the controls:
+`interrupt_session` stops it mid-turn, `get_session` reports where it got to, and
+`archive_session` retires it once the work has landed.
