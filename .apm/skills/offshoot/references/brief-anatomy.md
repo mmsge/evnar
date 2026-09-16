@@ -139,6 +139,38 @@ permission to come back with less:
 An agent that believes it must produce code produces code. That permission is what buys an
 honest answer instead.
 
+## 8. If the offshoot runs on a remote container rather than a local worktree
+
+A session started with `create_session` on claude.ai/code is not on this machine. It clones
+the repository from its git remote into a fresh container, and that container is reclaimed
+once the session ends. Three of the sections above change, and each is wrong in a way that
+costs the whole session rather than a paragraph.
+
+**Section 2, the boundary, gains a starting point and loses a machine.** Name the revision
+the offshoot starts from, because it sees what is pushed and nothing else: not your
+uncommitted work, not a commit still sitting unpushed, not a sibling repository that
+happens to be checked out beside this one. It cannot reach anything local either: no
+database on the machine that spun it off, no service on localhost, no file outside the
+clone. That cuts both ways, so it is worth a sentence of relief as well as one of
+warning. A whole class of
+"do not touch" has become physically impossible, and prohibitions about it are noise that
+crowds out the ones that still bite.
+
+**Section 3, credentials, points somewhere else.** There is no gitignored environment file
+in a fresh clone. What the offshoot needs has to be in the container's environment already,
+configured on the environment rather than carried in the brief. Name the variables it
+should expect, say they come from the environment, and say what to do when one is missing:
+stop and report it, rather than improvise around an absent credential. Outbound network
+access is a policy on that environment too, so anything depending on reaching a particular
+host should say what to do when the host is unreachable.
+
+**Section 7, what good looks like, has to end in something pushed.** The container goes
+away. A file written but not pushed, a finding that lives only in the transcript, and a
+green check on a branch nobody pushed all evaporate together. Make the deliverable a pushed
+branch and a draft pull request. Where the honest answer turns out to be "this should not
+be built", say that the document arguing so goes in the pull request as well; it is the
+only way it survives the container.
+
 ---
 
 ## Worked example
@@ -231,3 +263,7 @@ against the work is a better outcome than a scanner nobody will keep.
 - Is this a decision rather than a task, and if so does the brief stop at a proposal?
 - Is "done" observable, and is declining to build explicitly allowed?
 - Is there any secret in the prompt text? There must be none.
+- If it runs on a remote container, does the brief name the revision it starts from,
+  and is everything it builds on pushed?
+- If it runs on a remote container, does the deliverable survive it: a pushed branch and
+  a pull request, rather than a file left on a disk that gets reclaimed?

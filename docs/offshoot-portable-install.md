@@ -1,13 +1,13 @@
 # Installing offshoot-portable
 
-One skill, four clients. The `SKILL.md` and `references/` directory are identical
+One skill, five clients. The `SKILL.md` and `references/` directory are identical
 everywhere; only the install path changes.
 
-This is the cross-client sibling of [`offshoot`](../.apm/skills/offshoot/SKILL.md),
-which stays Claude Code only. Installing this package with APM deploys both, so on
-Claude Code you will have the two side by side.
+This is the cross-client sibling of [`offshoot`](../.apm/skills/offshoot/SKILL.md), which
+stays on Claude Code, local and web both. Installing this package with APM deploys both,
+so on Claude Code you will have the two side by side.
 
-## Claude Code
+## Claude Code, local
 
 | Scope | Path |
 |---|---|
@@ -15,6 +15,23 @@ Claude Code you will have the two side by side.
 | Personal | `~/.claude/skills/offshoot-portable/` |
 
 Triggers automatically from the `description`. Runs in spawn mode via `spawn_task`.
+
+## Claude Code on the web (claude.ai/code)
+
+Same paths, reached differently: a web session clones the repository, so the project copy
+at `.claude/skills/offshoot-portable/` travels with the repo and needs nothing further.
+A personal copy has to be uploaded through the skills page on claude.ai instead, since
+`~/.claude/` in an ephemeral container is not yours.
+
+Spawn mode here is `create_session` from the Claude Code Remote MCP server, usually
+`mcp__Claude_Code_Remote__create_session`. Two differences from the local build are worth
+knowing before you fire one:
+
+- It starts the session at once. There is no chip to click, so an unfinished brief is an
+  agent already working from an unfinished brief.
+- The new session gets a fresh clone from the git remote in its own container, not a
+  worktree beside yours. It cannot see unpushed commits or anything else on your machine,
+  and the container is reclaimed afterwards, so the work has to end in something pushed.
 
 ## GitHub Copilot
 
