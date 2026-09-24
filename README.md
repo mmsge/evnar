@@ -99,6 +99,7 @@ Versjonsnummeret lenkjer til utgåvesida for evna.
 
 | Evne | Versjon | Beskriving |
 |---|---|---|
+| [`agent-activity-log`](.apm/skills/agent-activity-log/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/agent-activity-log-v1.0.0) | Hald ein tidsstempla aktivitetslogg som publisert artefakt medan ein agent arbeider utan tilsyn |
 | [`books`](.apm/skills/books/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/books-v1.0.0) | Søk i lesehistorikk frå StoryGraph og Bookwyrm |
 | [`doctor-who`](.apm/skills/doctor-who/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/doctor-who-v1.0.0) | Slå opp, svar på og diskuter alt om Doctor Who |
 | [`favicon`](.apm/skills/favicon/SKILL.md) | [1.0.0](https://github.com/mmsge/evnar/releases/tag/favicon-v1.0.0) | Set opp favicon rett for eit webprosjekt, frå botnen eller som opprydding |
